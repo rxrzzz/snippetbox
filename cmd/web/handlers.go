@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/rxrzzz/snippetbox/pkg/models"
-	"html/template"
 	"net/http"
 	"strconv"
 )
@@ -13,22 +12,13 @@ func (app *application) home(w http.ResponseWriter, r *http.Request) {
 		app.notFound(w)
 		return
 	}
-	files := []string{
-		"../../ui/html/home.page.tmpl",
-		"../../ui/html/base.layout.tmpl",
-		"../../ui/html/footer.partial.tmpl",
-	}
-	ts, err := template.ParseFiles(files...)
+	s, err := app.snippets.Latest()
 	if err != nil {
-		app.errorLog.Println(err.Error())
 		app.serverError(w, err)
 		return
 	}
-	err = ts.Execute(w, nil)
-	if err != nil {
-		app.errorLog.Println(err.Error())
-		app.serverError(w, err)
-	}
+	app.render(w, r, "home.page.tmpl", &templateData{Snippets: s})
+
 }
 
 func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
@@ -45,8 +35,7 @@ func (app *application) showSnippet(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-
-	fmt.Fprintf(w, "%v", s)
+	app.render(w, r, "show.page.tmpl", &templateData{Snippet: s})
 }
 
 func (app *application) createSnippet(w http.ResponseWriter, r *http.Request) {
