@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"runtime/debug"
 	"time"
+
+	"github.com/rxrzzz/snippetbox/pkg/models"
 )
 
 func (app *application) serverError(w http.ResponseWriter, err error) {
@@ -43,4 +45,12 @@ func (app *application) render(w http.ResponseWriter, r *http.Request, name stri
 		return
 	}
 	buf.WriteTo(w)
+}
+
+func (app *application) authenticatedUser(r *http.Request) *models.User {
+	user, ok := r.Context().Value(contextKeyUser).(*models.User)
+	if !ok {
+		return nil
+	}
+	return user
 }

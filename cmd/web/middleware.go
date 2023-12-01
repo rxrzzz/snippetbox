@@ -31,3 +31,16 @@ func (app *application) recoverPanic(next http.Handler) http.Handler {
 		next.ServeHTTP(w, r)
 	})
 }
+
+func (app *application) requireAuthenticatedUser(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		userExists := true
+		if userExists {
+			next.ServeHTTP(w, r)
+
+		} else {
+			http.Redirect(w, r, "user/login", 302)
+		}
+
+	})
+}

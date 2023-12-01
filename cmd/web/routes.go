@@ -17,7 +17,8 @@ func (app *application) routes() http.Handler {
 	// mux.Get("/show/:id", http.HandlerFunc(app.showSnippet))
 
 	mux.Get("/", dynamicMiddleware.ThenFunc(app.home))
-	mux.Get("/create", dynamicMiddleware.ThenFunc(app.createSnippetForm))
+	//auth required
+	mux.Get("/create", dynamicMiddleware.Append(app.requireAuthenticatedUser).ThenFunc(app.createSnippetForm))
 	mux.Post("/create", dynamicMiddleware.ThenFunc(app.createSnippet))
 	mux.Get("/show/:id", dynamicMiddleware.ThenFunc(app.showSnippet))
 

@@ -13,6 +13,10 @@ import (
 	"time"
 )
 
+type contextKey string
+
+var contextKeyUser = contextKey("user")
+
 type application struct {
 	templateCache map[string]*template.Template
 	errorLog      *log.Logger
